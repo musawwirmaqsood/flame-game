@@ -11,6 +11,7 @@ class FlameGame extends Game with TapDetector {
   double tileSize;
   List<Fly> flies;
   Random rnd;
+  bool addFly = false;
 
   FlameGame() {
     initialize();
@@ -29,23 +30,16 @@ class FlameGame extends Game with TapDetector {
     Paint bgPaint = Paint();
     bgPaint.color = Color(0xff576574);
     canvas.drawRect(bgRect, bgPaint);
-
-    // // draw a box (make it green if won, white otherwise)
-    // double screenCenterX = screenSize.width / 2;
-    // double screenCenterY = screenSize.height / 2;
-    // Rect boxRect = Rect.fromLTWH(
-    //   screenCenterX - 75,
-    //   screenCenterY - 75,
-    //   150,
-    //   150,
-    // );
-    // Paint boxPaint = Paint();
-    // canvas.drawRect(boxRect, boxPaint);
     flies.forEach((Fly fly) => fly.render(canvas));
   }
 
   void update(double t) {
     flies.forEach((Fly fly) => fly.update(t));
+    flies.removeWhere((Fly fly) => fly.isOffScreen);
+    if (addFly) {
+      spawnFly();
+      addFly = false;
+    }
   }
 
   void resize(Size size) {
@@ -61,10 +55,10 @@ class FlameGame extends Game with TapDetector {
   }
 
   void onTapDown(TapDownDetails d) {
-    print("Player tap down on ${d.globalPosition.dx} - ${d.globalPosition.dy}");
     flies.forEach((Fly fly) {
       if (fly.flyRect.contains(d.globalPosition)) {
         fly.onTapDown();
+        addFly = true;
       }
     });
   }
