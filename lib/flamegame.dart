@@ -60,8 +60,12 @@ class FlameGame extends Game with TapDetector {
     flies.add(Fly(this, x, y));
   }
 
-  void onTapDown(TapDownDetails details) {
-    print(
-        "Player tap down on ${details.globalPosition.dx} - ${details.globalPosition.dy}");
+  void onTapDown(TapDownDetails d) {
+    print("Player tap down on ${d.globalPosition.dx} - ${d.globalPosition.dy}");
+    flies.forEach((Fly fly) {
+      if (fly.flyRect.contains(d.globalPosition)) {
+        fly.onTapDown();
+      }
+    });
   }
 }
