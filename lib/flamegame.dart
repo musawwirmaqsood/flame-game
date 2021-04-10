@@ -1,13 +1,12 @@
 import 'dart:math';
 import 'dart:ui';
-
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame/gestures.dart';
 import 'package:flamegame/components/fly.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class FlameGame extends Game {
+class FlameGame extends Game with TapDetector {
   Size screenSize;
   double tileSize;
   List<Fly> flies;
@@ -59,5 +58,10 @@ class FlameGame extends Game {
     double x = rnd.nextDouble() * (screenSize.width - tileSize);
     double y = rnd.nextDouble() * (screenSize.height - tileSize);
     flies.add(Fly(this, x, y));
+  }
+
+  void onTapDown(TapDownDetails details) {
+    print(
+        "Player tap down on ${details.globalPosition.dx} - ${details.globalPosition.dy}");
   }
 }
