@@ -1,17 +1,17 @@
 import 'dart:math';
 import 'dart:ui';
-
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame/gestures.dart';
 import 'package:flamegame/components/fly.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class FlameGame extends Game {
+class FlameGame extends Game with TapDetector {
   Size screenSize;
   double tileSize;
   List<Fly> flies;
   Random rnd;
+  bool addFly = false;
 
   FlameGame() {
     initialize();
@@ -30,23 +30,16 @@ class FlameGame extends Game {
     Paint bgPaint = Paint();
     bgPaint.color = Color(0xff576574);
     canvas.drawRect(bgRect, bgPaint);
-
-    // // draw a box (make it green if won, white otherwise)
-    // double screenCenterX = screenSize.width / 2;
-    // double screenCenterY = screenSize.height / 2;
-    // Rect boxRect = Rect.fromLTWH(
-    //   screenCenterX - 75,
-    //   screenCenterY - 75,
-    //   150,
-    //   150,
-    // );
-    // Paint boxPaint = Paint();
-    // canvas.drawRect(boxRect, boxPaint);
     flies.forEach((Fly fly) => fly.render(canvas));
   }
 
   void update(double t) {
     flies.forEach((Fly fly) => fly.update(t));
+    flies.removeWhere((Fly fly) => fly.isOffScreen);
+    if (addFly) {
+      spawnFly();
+      addFly = false;
+    }
   }
 
   void resize(Size size) {
@@ -59,5 +52,14 @@ class FlameGame extends Game {
     double x = rnd.nextDouble() * (screenSize.width - tileSize);
     double y = rnd.nextDouble() * (screenSize.height - tileSize);
     flies.add(Fly(this, x, y));
+  }
+
+  void onTapDown(TapDownDetails d) {
+    flies.forEach((Fly fly) {
+      if (fly.flyRect.contains(d.globalPosition)) {
+        fly.onTapDown();
+        addFly = true;
+      }
+    });
   }
 }
