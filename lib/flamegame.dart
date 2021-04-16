@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
+import 'package:flamegame/components/backyard.dart';
 import 'package:flamegame/components/fly.dart';
+import 'package:flamegame/components/house-fly.dart';
 import 'package:flutter/material.dart';
 
 class FlameGame extends Game with TapDetector {
@@ -12,6 +14,7 @@ class FlameGame extends Game with TapDetector {
   List<Fly> flies;
   Random rnd;
   bool addFly = false;
+  Backyard background;
 
   FlameGame() {
     initialize();
@@ -21,15 +24,17 @@ class FlameGame extends Game with TapDetector {
     flies = [];
     rnd = Random();
     resize(await Flame.util.initialDimensions());
+    background = Backyard(this);
     spawnFly();
   }
 
   void render(Canvas canvas) {
     // draw a black background on the whole screen
-    Rect bgRect = Rect.fromLTWH(0, 0, screenSize.width, screenSize.height);
-    Paint bgPaint = Paint();
-    bgPaint.color = Color(0xff576574);
-    canvas.drawRect(bgRect, bgPaint);
+    // Rect bgRect = Rect.fromLTWH(0, 0, screenSize.width, screenSize.height);
+    // Paint bgPaint = Paint();
+    // bgPaint.color = Color(0xff576574);
+    // canvas.drawRect(bgRect, bgPaint);
+    background.render(canvas);
     flies.forEach((Fly fly) => fly.render(canvas));
   }
 
@@ -51,7 +56,7 @@ class FlameGame extends Game with TapDetector {
   void spawnFly() {
     double x = rnd.nextDouble() * (screenSize.width - tileSize);
     double y = rnd.nextDouble() * (screenSize.height - tileSize);
-    flies.add(Fly(this, x, y));
+    flies.add(HouseFly(this, x, y));
   }
 
   void onTapDown(TapDownDetails d) {
